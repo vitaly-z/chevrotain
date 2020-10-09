@@ -1,3 +1,7 @@
+const { parseRegExpLiteral } = require("regexpp")
+
+const ast = parseRegExpLiteral("/[!a\\w]/")
+
 const { CstParser, Lexer, createToken } = require("chevrotain")
 
 // ----------------- lexer -----------------
@@ -20,7 +24,7 @@ const NumberLiteral = createToken({
 })
 const WhiteSpace = createToken({
   name: "WhiteSpace",
-  pattern: /[ \t\n\r]+/,
+  pattern: /\w/,
   group: Lexer.SKIPPED
 })
 

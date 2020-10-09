@@ -1,4 +1,4 @@
-import { BaseRegExpVisitor } from "regexp-to-ast"
+import { visitRegExpAST } from "regexpp"
 import { IRegExpExec, Lexer, LexerDefinitionErrorType } from "./lexer_public"
 import {
   compact,
@@ -38,7 +38,7 @@ import {
   IToken,
   TokenType
 } from "../../api"
-import { getRegExpAst } from "./reg_exp_parser"
+import { getRegExpAstNew } from "./reg_exp_parser"
 
 const PATTERN = "PATTERN"
 export const DEFAULT_MODE = "defaultMode"
@@ -493,31 +493,30 @@ const end_of_input = /[^\\][\$]/
 export function findEndOfInputAnchor(
   tokenTypes: TokenType[]
 ): ILexerDefinitionError[] {
-  class EndAnchorFinder extends BaseRegExpVisitor {
-    found = false
-
-    visitEndAnchor(node) {
-      this.found = true
-    }
-  }
-
-  let invalidRegex = filter(tokenTypes, (currType) => {
+  const invalidRegex = filter(tokenTypes, (currType) => {
     const pattern = currType[PATTERN]
 
     try {
-      const regexpAst = getRegExpAst(pattern)
-      const endAnchorVisitor = new EndAnchorFinder()
-      endAnchorVisitor.visit(regexpAst)
-
-      return endAnchorVisitor.found
+      const regExpAstNew = getRegExpAstNew(pattern)
+      let hasEndAnchor = false
+      visitRegExpAST(regExpAstNew, {
+        onAssertionEnter(node) {
+          if (node.kind === "end") {
+            hasEndAnchor = true
+          }
+        }
+      })
+      return hasEndAnchor
     } catch (e) {
-      // old behavior in case of runtime exceptions with regexp-to-ast.
-      /* istanbul ignore next - cannot ensure an error in regexp-to-ast*/
+      // in case of runtime exceptions with regexpp.
+      // This logic is not 100% accurate, however it "kind-of" makes the dependency
+      // to regexpp  *optional*.
+      /* istanbul ignore next - cannot ensure an error in regexpp*/
       return end_of_input.test(pattern.source)
     }
   })
 
-  let errors = map(invalidRegex, (currType) => {
+  const errors = map(invalidRegex, (currType) => {
     return {
       message:
         "Unexpected RegExp Anchor Error:\n" +
@@ -561,30 +560,29 @@ const start_of_input = /[^\\[][\^]|^\^/
 export function findStartOfInputAnchor(
   tokenTypes: TokenType[]
 ): ILexerDefinitionError[] {
-  class StartAnchorFinder extends BaseRegExpVisitor {
-    found = false
-
-    visitStartAnchor(node) {
-      this.found = true
-    }
-  }
-
-  let invalidRegex = filter(tokenTypes, (currType) => {
+  const invalidRegex = filter(tokenTypes, (currType) => {
     const pattern = currType[PATTERN]
     try {
-      const regexpAst = getRegExpAst(pattern)
-      const startAnchorVisitor = new StartAnchorFinder()
-      startAnchorVisitor.visit(regexpAst)
-
-      return startAnchorVisitor.found
+      const regexpAstNew = getRegExpAstNew(pattern)
+      let hasStartAnchor = false
+      visitRegExpAST(regexpAstNew, {
+        onAssertionEnter(node) {
+          if (node.kind === "start") {
+            hasStartAnchor = true
+          }
+        }
+      })
+      return hasStartAnchor
     } catch (e) {
-      // old behavior in case of runtime exceptions with regexp-to-ast.
-      /* istanbul ignore next - cannot ensure an error in regexp-to-ast*/
+      // in case of runtime exceptions with regexpp.
+      // This logic is not 100% accurate, however it "kind-of" makes the dependency
+      // to regexpp  *optional*.
+      /* istanbul ignore next - cannot ensure an error in regexpp*/
       return start_of_input.test(pattern.source)
     }
   })
 
-  let errors = map(invalidRegex, (currType) => {
+  const errors = map(invalidRegex, (currType) => {
     return {
       message:
         "Unexpected RegExp Anchor Error:\n" +

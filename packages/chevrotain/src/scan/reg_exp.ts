@@ -1,7 +1,6 @@
 import { VERSION, BaseRegExpVisitor } from "regexp-to-ast"
+import { AST } from "regexpp"
 import {
-  flatten,
-  map,
   forEach,
   contains,
   PRINT_ERROR,
@@ -11,7 +10,7 @@ import {
   every,
   values
 } from "../utils/utils"
-import { getRegExpAst } from "./reg_exp_parser"
+import { getRegExpAst, SemanticRegExpVisitor } from "./reg_exp_parser"
 import { charCodeToOptimizedIndex, minOptimizationVal } from "./lexer"
 
 const complementErrorMessage =
@@ -19,6 +18,8 @@ const complementErrorMessage =
 export const failedOptimizationPrefixMsg =
   'Unable to use "first char" lexer optimizations:\n'
 
+// TODO: need to replace with regexpp
+//      used to detect first chars in regexps
 export function getOptimizedStartCodesIndices(
   regExp: RegExp,
   ensureOptimizations = false
@@ -31,6 +32,8 @@ export function getOptimizedStartCodesIndices(
       ast.flags.ignoreCase
     )
     return firstChars
+    // TODO: how should we handle error messages with regexpp
+    // TODO: is this complement limitation still relevant with rexexpp?
   } catch (e) {
     /* istanbul ignore next */
     // Testing this relies on the regexp-to-ast library having a bug... */
@@ -288,6 +291,47 @@ class CharCodeFinder extends BaseRegExpVisitor {
   }
 }
 
+class CharCodeFinderNew extends SemanticRegExpVisitor {
+  found: boolean = false
+
+  constructor(private targetCharCodes: number[]) {
+    super()
+  }
+
+  public visit(node: AST.Node): void {
+    // No need to keep looking...
+    if (this.found === true) {
+      return
+    }
+
+    // switch lookaheads as they do not actually consume any characters thus
+    // finding a charCode at lookahead context does not mean that regexp can actually contain it in a match.
+    if (
+      node.type === "Assertion" &&
+      (node.kind === "lookahead" || node.kind === "lookbehind")
+    ) {
+      return
+    }
+
+    super.visit(node)
+  }
+
+  // TODO: transform the representation of character classes first?
+  protected visitCharacter(node: AST.Character): void {
+    // TODO: check if inside class?
+  }
+
+  protected visitCharacterClassRange(node: AST.CharacterClassRange): void {
+    // TODO: always inside class, so check negation
+  }
+
+  protected visitCharacterSet(node: AST.CharacterSet): void {
+    // TODO translate sets to codePoint ranges?
+  }
+}
+
+// TODO: need to replace with regexpp
+//       used to detect line terminator characters in regexps
 export function canMatchCharCode(
   charCodes: number[],
   pattern: RegExp | string
