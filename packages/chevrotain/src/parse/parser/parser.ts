@@ -24,7 +24,8 @@ import {
   IRuleConfig,
   IToken,
   TokenType,
-  TokenVocabulary
+  TokenVocabulary,
+  ParserMethod
 } from "@chevrotain/types"
 import { Recoverable } from "./traits/recoverable"
 import { LooksAhead } from "./traits/looksahead"

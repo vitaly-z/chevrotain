@@ -11,6 +11,7 @@ import {
   IToken,
   ManySepMethodOpts,
   OrMethodOpts,
+  ParserMethod,
   SubruleMethodOpts,
   TokenType
 } from "@chevrotain/types"

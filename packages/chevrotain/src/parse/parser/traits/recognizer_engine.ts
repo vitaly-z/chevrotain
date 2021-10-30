@@ -225,6 +225,7 @@ export class RecognizerEngine {
       ): R {
         try {
           this.ruleInvocationStateUpdate(shortName, ruleName, this.subruleIdx)
+          this.ruleInvocationStateUpdate(shortName, ruleName, this.subruleIdx)
           impl.apply(this, args)
           const cst = this.CST_STACK[this.CST_STACK.length - 1]
           this.cstPostRule(cst)
