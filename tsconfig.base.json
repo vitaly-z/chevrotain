@@ -1,9 +1,10 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "ES5",
+    "target": "ES2015",
     "composite": true,
-    "module": "CommonJS",
+    "moduleResolution": "nodenext",
+    "module": "ES2020",
     "esModuleInterop": true,
     "removeComments": false,
     "sourceMap": true,

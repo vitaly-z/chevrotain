@@ -1,19 +1,18 @@
-import { createToken } from "../../../src/scan/tokens_public"
-import { Lexer } from "../../../src/scan/lexer_public"
-import { EmbeddedActionsParser } from "../../../src/parse/parser/traits/parser_traits"
+import { createToken } from "../../../src/scan/tokens_public.js"
+import { Lexer } from "../../../src/scan/lexer_public.js"
+import {
+  EmbeddedActionsParser,
+  MixedInParser
+} from "../../../src/parse/parser/traits/parser_traits.js"
 
 import {
   END_OF_FILE,
   LookAheadSequence,
   TokenMatcher
-} from "../../../src/parse/parser/parser"
-import { MismatchedTokenException } from "../../../src/parse/exceptions_public"
-import flatten from "lodash/flatten"
-import every from "lodash/every"
-import map from "lodash/map"
-import forEach from "lodash/forEach"
+} from "../../../src/parse/parser/parser.js"
+import { MismatchedTokenException } from "../../../src/parse/exceptions_public.js"
+import { every, flatten, forEach, map } from "lodash-es"
 import { IOrAlt, IToken, TokenType } from "@chevrotain/types"
-import { MixedInParser } from "../../../src/parse/parser/traits/parser_traits"
 
 declare type QuirksTokens = {
   Return: TokenType

@@ -1,23 +1,10 @@
-import {
-  Alternative,
-  Atom,
-  BaseRegExpVisitor,
-  Character,
-  Disjunction,
-  Group,
-  Set,
-  Term,
-  VERSION
-} from "regexp-to-ast"
-import isArray from "lodash/isArray"
-import every from "lodash/every"
-import forEach from "lodash/forEach"
-import find from "lodash/find"
-import values from "lodash/values"
-import includes from "lodash/includes"
+import type { Atom, Character, Set } from "regexp-to-ast"
+import regExpToAst from "regexp-to-ast"
+const { VERSION, BaseRegExpVisitor } = regExpToAst
+import { every, find, forEach, includes, isArray, values } from "lodash-es"
 import { PRINT_ERROR, PRINT_WARNING } from "@chevrotain/utils"
-import { ASTNode, getRegExpAst } from "./reg_exp_parser"
-import { charCodeToOptimizedIndex, minOptimizationVal } from "./lexer"
+import { ASTNode, getRegExpAst } from "./reg_exp_parser.js"
+import { charCodeToOptimizedIndex, minOptimizationVal } from "./lexer.js"
 
 const complementErrorMessage =
   "Complement Sets are not supported for first char optimization"

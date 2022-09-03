@@ -4,14 +4,13 @@ import {
   buildLookaheadFuncForOr,
   buildSingleAlternativeLookaheadFunction,
   PROD_TYPE
-} from "../../grammar/lookahead"
-import forEach from "lodash/forEach"
-import has from "lodash/has"
+} from "../../grammar/lookahead.js"
+import { forEach, has } from "lodash-es"
 import {
   DEFAULT_PARSER_CONFIG,
   LookAheadSequence,
   TokenMatcher
-} from "../parser"
+} from "../parser.js"
 import { IOrAlt, IParserConfig } from "@chevrotain/types"
 import {
   AT_LEAST_ONE_IDX,
@@ -21,11 +20,12 @@ import {
   MANY_SEP_IDX,
   OPTION_IDX,
   OR_IDX
-} from "../../grammar/keys"
-import { MixedInParser } from "./parser_traits"
+} from "../../grammar/keys.js"
+import { MixedInParser } from "./parser_traits.js"
 import {
   Alternation,
   GAstVisitor,
+  getProductionDslName,
   Option,
   Repetition,
   RepetitionMandatory,
@@ -33,7 +33,6 @@ import {
   RepetitionWithSeparator,
   Rule
 } from "@chevrotain/gast"
-import { getProductionDslName } from "@chevrotain/gast"
 
 /**
  * Trait responsible for the lookahead related utilities and optimizations.

@@ -1,11 +1,12 @@
-import {
+import type {
   Alternative,
   Assertion,
   Atom,
   Disjunction,
-  RegExpParser,
   RegExpPattern
 } from "regexp-to-ast"
+import regExpToAst from "regexp-to-ast"
+const { RegExpParser } = regExpToAst
 
 let regExpAstCache: { [regex: string]: RegExpPattern } = {}
 const regExpParser = new RegExpParser()
