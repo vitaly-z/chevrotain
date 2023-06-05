@@ -29,6 +29,6 @@
     "lodash": "4.17.21"
   },
   "devDependencies": {
-    "glob": "8.0.3"
+    "glob": "8.1.0"
   }
 }
